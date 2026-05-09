@@ -1,9 +1,5 @@
 import { Variants } from "framer-motion";
 
-/**
- * Premium Timing Configuration
- * ease: easeOut (Quart) for a smooth, high-end feel
- */
 export const transition = {
   duration: 0.6,
   ease: [0.22, 1, 0.36, 1], // Custom easeOutQuart for premium feel

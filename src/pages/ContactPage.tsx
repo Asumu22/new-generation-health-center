@@ -1,13 +1,14 @@
-import React, { useEffect, useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import React, { useEffect, useMemo, useState } from "react";
+import { AnimatePresence, motion } from "framer-motion";
 import { Button } from "../components/Button";
-import { Helmet } from "react-helmet-async";
+import { SEO } from "../components/SEO";
 import { SendMessageForm } from "../components/SendMessageForm";
 import { IMAGES } from "../constants/images";
 import { fadeUp, staggerContainer, scaleHover, fadeIn } from "./animations";
 import { contentService } from "../services/content";
 import { newsletterService } from "../services/newsletter";
 import { resolveImageUrl } from "../lib/image";
+import { getPageTitle, getPageDescription } from "../lib/seo";
 import type { SiteContent } from "../types";
 
 const DEFAULT_CONTACT_CONTENT = {
@@ -22,10 +23,18 @@ const DEFAULT_CONTACT_CONTENT = {
     description:
       "Fill out the form below and we'll get back to you as soon as possible.",
   },
+  location: {
+    mapImage: "",
+  },
+  newsletter: {
+    title: "Stay Updated With Direlda",
+    description: "Get the latest care news, tips, and resources.",
+  },
   info: {
     phone: "+1 (800) 456-7890",
     email: "care@newgenhealth.com",
     address: "Molyko, Buea",
+    workingHours: "Mon - Sat: 09.00 AM - 08.00 PM",
   },
 };
 
@@ -40,6 +49,45 @@ export const ContactPage = () => {
   const [error, setError] = useState("");
   const [email, setEmail] = useState("");
   const [subscribeMessage, setSubscribeMessage] = useState("");
+
+  const contactInfo = useMemo(
+    () => ({
+      phone: globalContent?.phone || DEFAULT_CONTACT_CONTENT.info.phone,
+      email: globalContent?.email || DEFAULT_CONTACT_CONTENT.info.email,
+      address: globalContent?.address || DEFAULT_CONTACT_CONTENT.info.address,
+      workingHours:
+        globalContent?.workingHours ||
+        DEFAULT_CONTACT_CONTENT.info.workingHours,
+    }),
+    [globalContent],
+  );
+
+  const pageContent = useMemo(
+    () => ({
+      hero: {
+        ...DEFAULT_CONTACT_CONTENT.hero,
+        ...(contactPageContent?.hero || {}),
+      },
+      form: {
+        ...DEFAULT_CONTACT_CONTENT.form,
+        ...(contactPageContent?.form || {}),
+      },
+      info: {
+        ...DEFAULT_CONTACT_CONTENT.info,
+        ...(contactPageContent?.info || {}),
+      },
+      newsletter: {
+        ...DEFAULT_CONTACT_CONTENT.newsletter,
+        ...(contactPageContent?.newsletter || {}),
+      },
+    }),
+    [contactPageContent],
+  );
+
+  const pageTitle = getPageTitle("Contact Us");
+  const pageDescription = getPageDescription(
+    pageContent.hero.description || DEFAULT_CONTACT_CONTENT.hero.description,
+  );
 
   useEffect(() => {
     const fetchContent = async () => {
@@ -98,16 +146,12 @@ export const ContactPage = () => {
 
   return (
     <>
-      <Helmet>
-        <title>Contact Us | New Generation Health Center</title>
-        <meta
-          name="description"
-          content={
-            contactPageContent?.hero?.description ||
-            "Get in touch with New Generation Health Center for inquiries and appointments."
-          }
-        />
-      </Helmet>
+      <SEO
+        title={pageTitle}
+        description={pageDescription}
+        path="/contact"
+        image={resolveImageUrl(pageContent.hero.image, IMAGES.contactHero)}
+      />
       <main className="bg-surface text-text-primary">
         <section className="relative overflow-hidden bg-white">
           <div className="absolute inset-x-0 top-0 h-72 bg-primary/10 blur-3xl" />
@@ -118,11 +162,10 @@ export const ContactPage = () => {
                   Contact
                 </span>
                 <h1 className="text-4xl font-semibold tracking-tight text-slate-950 sm:text-5xl lg:text-6xl leading-tight">
-                  {contactPageContent?.hero?.title || "Get In Touch With Us"}
+                  {pageContent.hero.title}
                 </h1>
                 <p className="max-w-2xl text-base leading-8 text-text-secondary sm:text-lg">
-                  {contactPageContent?.hero?.description ||
-                    "Share your details and questions, and our team will reach out with the right guidance."}
+                  {pageContent.hero.description}
                 </p>
               </div>
 
@@ -135,11 +178,15 @@ export const ContactPage = () => {
                 <div className="aspect-[4/3] sm:aspect-[16/9] w-full overflow-hidden">
                   <img
                     src={resolveImageUrl(
-                      contactPageContent?.hero?.image,
+                      pageContent.hero.image,
                       IMAGES.contactHero,
                     )}
-                    alt="Hands holding in care setting"
+                    alt={
+                      pageContent.hero.title ||
+                      "Contact New Generation Health Center"
+                    }
                     className="h-full w-full object-cover"
+                    loading="lazy"
                   />
                 </div>
               </motion.div>
@@ -160,97 +207,94 @@ export const ContactPage = () => {
                 variants={fadeUp}
                 className="text-3xl font-semibold text-slate-950 sm:text-4xl"
               >
-                Send Us a Message
+                {pageContent.form.title}
               </motion.h2>
               <motion.p
                 variants={fadeUp}
                 className="mt-4 text-base leading-8 text-text-secondary"
               >
-                Have a question or need help? Send us a message and our team
-                will respond as soon as possible.
+                {pageContent.form.description}
               </motion.p>
             </div>
 
-            {globalContent && (
-              <div className="mt-12 grid gap-6 md:grid-cols-2 lg:grid-cols-4">
-                <motion.div
-                  variants={fadeUp}
-                  whileHover={scaleHover.hover}
-                  className="rounded-[32px] border border-border bg-white p-6 shadow-soft"
-                >
-                  <div className="flex h-12 w-12 items-center justify-center rounded-3xl bg-primary/10">
-                    <img
-                      src={IMAGES.iconPhone}
-                      alt="Phone icon"
-                      className="h-6 w-6"
-                    />
-                  </div>
-                  <p className="mt-6 text-sm font-semibold text-slate-950">
-                    Phone
-                  </p>
-                  <p className="mt-3 text-base leading-7 text-text-secondary">
-                    {globalContent.phone}
-                  </p>
-                </motion.div>
-                <motion.div
-                  variants={fadeUp}
-                  whileHover={scaleHover.hover}
-                  className="rounded-[32px] border border-border bg-white p-6 shadow-soft"
-                >
-                  <div className="flex h-12 w-12 items-center justify-center rounded-3xl bg-primary/10">
-                    <img
-                      src={IMAGES.iconEmail}
-                      alt="Mail icon"
-                      className="h-6 w-6"
-                    />
-                  </div>
-                  <p className="mt-6 text-sm font-semibold text-slate-950">
-                    Mail
-                  </p>
-                  <p className="mt-3 text-base leading-7 text-text-secondary">
-                    {globalContent.email}
-                  </p>
-                </motion.div>
-                <motion.div
-                  variants={fadeUp}
-                  whileHover={scaleHover.hover}
-                  className="rounded-[32px] border border-border bg-white p-6 shadow-soft"
-                >
-                  <div className="flex h-12 w-12 items-center justify-center rounded-3xl bg-primary/10">
-                    <img
-                      src={IMAGES.iconLocation}
-                      alt="Office Hours icon"
-                      className="h-6 w-6"
-                    />
-                  </div>
-                  <p className="mt-6 text-sm font-semibold text-slate-950">
-                    Office Hours
-                  </p>
-                  <p className="mt-3 text-base leading-7 text-text-secondary">
-                    {globalContent.workingHours}
-                  </p>
-                </motion.div>
-                <motion.div
-                  variants={fadeUp}
-                  whileHover={scaleHover.hover}
-                  className="rounded-[32px] border border-border bg-white p-6 shadow-soft"
-                >
-                  <div className="flex h-12 w-12 items-center justify-center rounded-3xl bg-primary/10">
-                    <img
-                      src={IMAGES.iconLocation}
-                      alt="Location icon"
-                      className="h-6 w-6"
-                    />
-                  </div>
-                  <p className="mt-6 text-sm font-semibold text-slate-950">
-                    Location
-                  </p>
-                  <p className="mt-3 text-base leading-7 text-text-secondary">
-                    {globalContent.address}
-                  </p>
-                </motion.div>
-              </div>
-            )}
+            <div className="mt-12 grid gap-6 md:grid-cols-2 lg:grid-cols-4">
+              <motion.div
+                variants={fadeUp}
+                whileHover={scaleHover.hover}
+                className="rounded-[32px] border border-border bg-white p-6 shadow-soft"
+              >
+                <div className="flex h-12 w-12 items-center justify-center rounded-3xl bg-primary/10">
+                  <img
+                    src={IMAGES.iconPhone}
+                    alt="Phone icon"
+                    className="h-6 w-6"
+                  />
+                </div>
+                <p className="mt-6 text-sm font-semibold text-slate-950">
+                  Phone
+                </p>
+                <p className="mt-3 text-base leading-7 text-text-secondary">
+                  {contactInfo.phone}
+                </p>
+              </motion.div>
+              <motion.div
+                variants={fadeUp}
+                whileHover={scaleHover.hover}
+                className="rounded-[32px] border border-border bg-white p-6 shadow-soft"
+              >
+                <div className="flex h-12 w-12 items-center justify-center rounded-3xl bg-primary/10">
+                  <img
+                    src={IMAGES.iconEmail}
+                    alt="Mail icon"
+                    className="h-6 w-6"
+                  />
+                </div>
+                <p className="mt-6 text-sm font-semibold text-slate-950">
+                  Email
+                </p>
+                <p className="mt-3 text-base leading-7 text-text-secondary">
+                  {contactInfo.email}
+                </p>
+              </motion.div>
+              <motion.div
+                variants={fadeUp}
+                whileHover={scaleHover.hover}
+                className="rounded-[32px] border border-border bg-white p-6 shadow-soft"
+              >
+                <div className="flex h-12 w-12 items-center justify-center rounded-3xl bg-primary/10">
+                  <img
+                    src={IMAGES.iconLocation}
+                    alt="Office Hours icon"
+                    className="h-6 w-6"
+                  />
+                </div>
+                <p className="mt-6 text-sm font-semibold text-slate-950">
+                  Office Hours
+                </p>
+                <p className="mt-3 text-base leading-7 text-text-secondary">
+                  {contactInfo.workingHours}
+                </p>
+              </motion.div>
+              <motion.div
+                variants={fadeUp}
+                whileHover={scaleHover.hover}
+                className="rounded-[32px] border border-border bg-white p-6 shadow-soft"
+              >
+                <div className="flex h-12 w-12 items-center justify-center rounded-3xl bg-primary/10">
+                  <img
+                    src={IMAGES.iconLocation}
+                    alt="Location icon"
+                    className="h-6 w-6"
+                  />
+                </div>
+                <p className="mt-6 text-sm font-semibold text-slate-950">
+                  Location
+                </p>
+                <p className="mt-3 text-base leading-7 text-text-secondary">
+                  {contactInfo.address}
+                </p>
+              </motion.div>
+            </div>
           </motion.div>
         </section>
 
@@ -262,7 +306,7 @@ export const ContactPage = () => {
                   <div className="aspect-[4/3] w-full overflow-hidden">
                     <img // Map image
                       src={resolveImageUrl(
-                        contactPageContent?.location?.mapImage,
+                        (contactPageContent as any)?.location?.mapImage,
                         IMAGES.contactMap,
                       )}
                       alt="Static map of Molyko, Buea"
@@ -277,7 +321,7 @@ export const ContactPage = () => {
                         Address
                       </p>
                       <p className="mt-4 text-base leading-7 text-text-secondary">
-                        {globalContent?.address}
+                        {contactInfo.address}
                       </p>
                     </div>
                     <div>
@@ -285,7 +329,7 @@ export const ContactPage = () => {
                         Opening Hours
                       </p>
                       <p className="mt-4 text-base leading-7 text-text-secondary">
-                        {globalContent?.workingHours}
+                        {contactInfo.workingHours}
                       </p>
                     </div>
                   </div>
@@ -305,12 +349,10 @@ export const ContactPage = () => {
               <div className="flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between">
                 <div>
                   <p className="text-sm font-semibold uppercase tracking-[0.35em] text-primary">
-                    {contactPageContent?.newsletter?.title ||
-                      "Stay Updated With Direlda"}
+                    {pageContent.newsletter.title}
                   </p>
                   <h3 className="mt-3 text-2xl font-semibold text-slate-950 sm:text-3xl">
-                    {contactPageContent?.newsletter?.description ||
-                      "Get the latest care news, tips, and resources."}
+                    {pageContent.newsletter.description}
                   </h3>
                 </div>
                 <form

@@ -1,11 +1,12 @@
 import { motion } from "framer-motion";
-import { useEffect, useState, useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Button, ConsultationForm } from "../components";
 import { SEO } from "../components/SEO";
 import { IMAGES } from "../constants/images";
 import { contentService } from "../services/content";
 import { serviceService } from "../services/services";
 import { resolveImageUrl } from "../lib/image";
+import { getPageDescription, getPageTitle } from "../lib/seo";
 import type { ServiceItem } from "../types";
 import {
   fadeUp,
@@ -130,6 +131,49 @@ export const LandingPage = () => {
   const [services, setServices] = useState<ServiceItem[]>([]);
   const [loading, setLoading] = useState(true);
 
+  const pageContent = useMemo(
+    () => ({
+      hero: {
+        ...DEFAULT_CONTENT.hero,
+        ...(landingContent.hero || {}),
+      },
+      servicesSection: {
+        ...DEFAULT_CONTENT.servicesSection,
+        ...(landingContent.servicesSection || {}),
+      },
+      highlights: {
+        ...DEFAULT_CONTENT.highlights,
+        ...(landingContent.highlights || {}),
+      },
+      dailyCare: {
+        ...DEFAULT_CONTENT.dailyCare,
+        ...(landingContent.dailyCare || {}),
+      },
+      statsSection: {
+        ...DEFAULT_CONTENT.statsSection,
+        ...(landingContent.statsSection || {}),
+      },
+      approach: {
+        ...DEFAULT_CONTENT.approach,
+        ...(landingContent.approach || {}),
+      },
+      faq: {
+        ...DEFAULT_CONTENT.faq,
+        ...(landingContent.faq || {}),
+      },
+      consultation: {
+        ...DEFAULT_CONTENT.consultation,
+        ...(landingContent.consultation || {}),
+      },
+    }),
+    [landingContent],
+  );
+
+  const pageTitle = getPageTitle("New Generation Health Center");
+  const pageDescription = getPageDescription(
+    pageContent.hero.description || DEFAULT_CONTENT.hero.description,
+  );
+
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -150,9 +194,18 @@ export const LandingPage = () => {
             ...prev,
             ...contentData.landing_page,
             hero: { ...prev.hero, ...(contentData.landing_page.hero || {}) },
-            highlights: { ...prev.highlights, ...(contentData.landing_page.highlights || {}) },
-            servicesSection: { ...prev.servicesSection, ...(contentData.landing_page.servicesSection || {}) },
-            statsSection: { ...prev.statsSection, ...(contentData.landing_page.statsSection || {}) },
+            highlights: {
+              ...prev.highlights,
+              ...(contentData.landing_page.highlights || {}),
+            },
+            servicesSection: {
+              ...prev.servicesSection,
+              ...(contentData.landing_page.servicesSection || {}),
+            },
+            statsSection: {
+              ...prev.statsSection,
+              ...(contentData.landing_page.statsSection || {}),
+            },
           }));
         }
 
@@ -170,13 +223,20 @@ export const LandingPage = () => {
     fetchData();
   }, []);
 
-  // Helper to get image URL with fallback
+  // Helper to get image URL with fallback and optimized delivery params
   const getImage = (url: string | undefined, fallback: string) => {
-    return resolveImageUrl(url, fallback);
+    return resolveImageUrl(url, fallback, {
+      width: 1200,
+      quality: "auto",
+      format: "auto",
+    });
   };
 
   // Memoized stats to prevent unnecessary recalculations
-  const heroStats = useMemo(() => landingContent.hero.stats || [], [landingContent.hero.stats]);
+  const heroStats = useMemo(
+    () => landingContent.hero.stats || [],
+    [landingContent.hero.stats],
+  );
 
   if (loading) {
     return (
@@ -212,12 +272,12 @@ export const LandingPage = () => {
     approach,
     faq,
     consultation,
-  } = landingContent;
+  } = pageContent;
   return (
     <>
-      <SEO 
-        title="New Generation Health Center | Compassionate Family Care"
-        description={hero.description || "Compassionate medical care across every stage of life, delivered with clarity, comfort, and confidence."}
+      <SEO
+        title={pageTitle}
+        description={pageDescription}
         path="/"
         image={getImage(hero.image, IMAGES.hero)}
       />
@@ -316,7 +376,8 @@ export const LandingPage = () => {
                   <div className="flex items-center gap-3">
                     <img
                       src={getImage(hero.doctor?.image, IMAGES.doctorPrimary)}
-                      alt="Doctor portrait"
+                      alt={hero.doctor?.name || "Doctor portrait"}
+                      loading="lazy"
                       className="h-14 w-14 rounded-3xl object-cover"
                     />
                     <div>
@@ -373,7 +434,8 @@ export const LandingPage = () => {
                     <motion.img
                       variants={imageHover}
                       src={getImage(card.image, IMAGES.serviceCheckup)}
-                      alt={card.title}
+                      alt={card.title || "Service preview image"}
+                      loading="lazy"
                       className="h-full w-full object-cover"
                     />
                   </motion.div>
@@ -477,7 +539,8 @@ export const LandingPage = () => {
                 <div className="aspect-[16/9] w-full overflow-hidden">
                   <img
                     src={getImage(dailyCare.image, IMAGES.appointmentCTA)}
-                    alt="Care team during consultation"
+                    alt={dailyCare.title || "Care team during consultation"}
+                    loading="lazy"
                     className="h-full w-full object-cover"
                   />
                 </div>
@@ -569,7 +632,8 @@ export const LandingPage = () => {
                 <div className="aspect-[4/5] w-full overflow-hidden">
                   <img
                     src={getImage(approach.image, IMAGES.aboutClinic)}
-                    alt="Quality-driven care approach"
+                    alt={approach.title || "Quality-driven care approach"}
+                    loading="lazy"
                     className="h-full w-full object-cover"
                   />
                 </div>
@@ -626,7 +690,8 @@ export const LandingPage = () => {
                 <div className="aspect-[4/5] w-full overflow-hidden">
                   <img
                     src={getImage(faq.image, IMAGES.clinicInterior)}
-                    alt="Healthcare interior scene"
+                    alt={faq.title || "Healthcare interior scene"}
+                    loading="lazy"
                     className="h-full w-full object-cover"
                   />
                 </div>
@@ -643,7 +708,8 @@ export const LandingPage = () => {
           <div className="absolute inset-0 opacity-50">
             <img
               src={getImage(consultation.image, IMAGES.appointmentCTA)}
-              alt="Appointment background"
+              alt={consultation.title || "Appointment background"}
+              loading="lazy"
               className="h-full w-full object-cover"
             />
             <div className="absolute inset-0 bg-slate-950/75" />

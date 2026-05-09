@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { motion } from "framer-motion";
 import { SEO } from "../components/SEO";
 import { Button } from "../components";
@@ -14,6 +14,7 @@ import {
 import { contentService } from "../services/content";
 import { doctorService } from "../services/doctors";
 import { resolveImageUrl } from "../lib/image";
+import { getPageTitle, getPageDescription } from "../lib/seo";
 import type { SiteContent, Doctor } from "../types";
 
 const DEFAULT_ABOUT_CONTENT: any = {
@@ -51,6 +52,40 @@ export const AboutPage = () => {
   const [doctors, setDoctors] = useState<Doctor[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+
+  const pageContent = useMemo(
+    () => ({
+      ...DEFAULT_ABOUT_CONTENT,
+      ...content,
+      hero: {
+        ...DEFAULT_ABOUT_CONTENT.hero,
+        ...(content?.hero || {}),
+      },
+      purpose: {
+        ...DEFAULT_ABOUT_CONTENT.purpose,
+        ...(content?.purpose || {}),
+      },
+      milestones: {
+        ...DEFAULT_ABOUT_CONTENT.milestones,
+        ...(content?.milestones || {}),
+      },
+      facilities: {
+        ...DEFAULT_ABOUT_CONTENT.facilities,
+        ...(content?.facilities || {}),
+      },
+      team: {
+        ...DEFAULT_ABOUT_CONTENT.team,
+        ...(content?.team || {}),
+      },
+    }),
+    [content],
+  );
+
+  const pageTitle = getPageTitle(pageContent.hero.title || "About Our Clinic");
+  const pageDescription = getPageDescription(
+    pageContent.hero.description ||
+      "Learn about our mission, vision, and the dedicated team at New Generation Health Center.",
+  );
 
   useEffect(() => {
     const fetchData = async () => {
@@ -104,16 +139,10 @@ export const AboutPage = () => {
   return (
     <>
       <SEO
-        title="About Our Clinic | New Generation Health Center"
-        description={
-          (content?.hero as any)?.description ||
-          "Learn about our mission, vision, and the dedicated team at New Generation Health Center."
-        }
+        title={pageTitle}
+        description={pageDescription}
         path="/about"
-        image={resolveImageUrl(
-          (content?.hero as any)?.image,
-          IMAGES.servicesHero,
-        )}
+        image={resolveImageUrl(pageContent.hero.image, IMAGES.servicesHero)}
       />
       <main id="about-page" className="bg-surface text-text-primary">
         <section className="relative overflow-hidden bg-white">

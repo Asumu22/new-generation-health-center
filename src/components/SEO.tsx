@@ -41,6 +41,30 @@ export const SEO = ({
     description,
     url: canonicalUrl,
     image: imageUrl,
+    telephone: import.meta.env.VITE_CLINIC_PHONE || undefined,
+    email: import.meta.env.VITE_CLINIC_EMAIL || undefined,
+    address: import.meta.env.VITE_CLINIC_ADDRESS || undefined,
+    openingHoursSpecification: [
+      {
+        "@type": "OpeningHoursSpecification",
+        dayOfWeek: [
+          "Monday",
+          "Tuesday",
+          "Wednesday",
+          "Thursday",
+          "Friday",
+          "Saturday",
+        ],
+        opens: "09:00",
+        closes: "20:00",
+      },
+    ],
+    sameAs: [
+      "https://www.facebook.com/",
+      "https://www.twitter.com/",
+      "https://www.instagram.com/",
+      "https://www.linkedin.com/",
+    ],
   };
 
   return (
@@ -59,6 +83,8 @@ export const SEO = ({
       />
       <meta name="twitter:title" content={title} />
       <meta name="twitter:description" content={description} />
+      <meta name="twitter:site" content="@NewGenHealth" />
+      <meta name="twitter:creator" content="@NewGenHealth" />
       {imageUrl && <meta name="twitter:image" content={imageUrl} />}
       <script type="application/ld+json">
         {JSON.stringify(structuredData)}
