@@ -146,3 +146,9 @@ src/FOOTER_SUMMARY.md
 src/components/FOOTER_GUIDE.md
 src/components/FOOTER_QUICK_REFERENCE.md
 src/constants/IMAGE_PLACEMENTS.md
+
+# wrangler files
+.wrangler
+.dev.vars*
+!.dev.vars.example
+!.env.example
