@@ -198,7 +198,7 @@ export const AboutPage = () => {
           </motion.div>
         </section>
 
-        <section id="our-purpose" className="bg-surface py-20 sm:py-24">
+        <section id="our-purpose" className="bg-surface py-21 sm:py-24">
           <motion.div
             variants={staggerContainer}
             initial="hidden"
