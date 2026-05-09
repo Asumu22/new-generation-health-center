@@ -234,7 +234,7 @@ export const LandingPage = () => {
 
   const serviceCards = useMemo(() => {
     if (services.length > 0) return services;
-    return servicesSection.items.map((item, idx) => ({
+    return pageContent.servicesSection.items.map((item, idx) => ({
       id: `fallback-${idx}`,
       title: item.title || "Service",
       description: item.description || "",
@@ -242,7 +242,7 @@ export const LandingPage = () => {
       created_at: "",
       updated_at: "",
     }));
-  }, [services, servicesSection.items]);
+  }, [services, pageContent.servicesSection.items]);
 
   // Memoized stats to prevent unnecessary recalculations
   const heroStats = useMemo(
