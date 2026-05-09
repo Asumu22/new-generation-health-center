@@ -12,10 +12,12 @@ export const resolveImageUrl = (
 ) => {
   if (!value) return fallback || "";
   if (value.startsWith("http") || value.startsWith("data:")) return value;
+
+  // Use aggressive optimization for production
   return buildCloudinaryImageUrl(value, {
-    width: options?.width ?? 1200,
+    width: options?.width ?? 800, // Smaller default
     height: options?.height,
-    quality: options?.quality,
-    format: options?.format,
+    quality: options?.quality ?? "auto:low", // Better compression
+    format: options?.format ?? "auto",
   });
 };

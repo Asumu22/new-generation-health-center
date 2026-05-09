@@ -21,6 +21,7 @@ export const ConsultationForm = ({
 
   const [formData, setFormData] = useState({
     fullName: "",
+    email: "",
     phone: "",
     serviceId: "",
     date: "",
@@ -62,16 +63,18 @@ export const ConsultationForm = ({
     try {
       await appointmentService.create({
         full_name: formData.fullName,
+        email: formData.email,
         phone: formData.phone,
         service_id: formData.serviceId || null,
         date: formData.date || null,
         time: formData.time || null,
-        message: formData.message || null,
+        message: formData.message,
         type: "consultation",
       });
       setSuccess(true);
       setFormData({
         fullName: "",
+        email: "",
         phone: "",
         serviceId: services[0]?.id || "",
         date: "",
@@ -79,10 +82,13 @@ export const ConsultationForm = ({
         message: "",
       });
     } catch (err) {
+      console.error("Appointment submit error:", err);
       setError(
         err instanceof Error
           ? err.message
-          : "Failed to submit. Please try again.",
+          : typeof err === "object" && err !== null
+            ? JSON.stringify(err)
+            : "Failed to submit. Please try again.",
       );
     } finally {
       setLoading(false);
@@ -153,6 +159,19 @@ export const ConsultationForm = ({
       </label>
 
       <label className="space-y-2 text-sm font-medium text-slate-950">
+        Email address
+        <input
+          type="email"
+          name="email"
+          value={formData.email}
+          onChange={handleChange}
+          required
+          placeholder="you@example.com"
+          className="w-full rounded-[28px] border border-border bg-white px-5 py-4 text-sm text-slate-950 shadow-sm outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/20"
+        />
+      </label>
+
+      <label className="space-y-2 text-sm font-medium text-slate-950">
         Phone number
         <input
           type="tel"
@@ -168,8 +187,8 @@ export const ConsultationForm = ({
       <label className="space-y-2 text-sm font-medium text-slate-950">
         Service needed
         <select
-          name="service"
-          value={formData.service}
+          name="serviceId"
+          value={formData.serviceId}
           onChange={handleChange}
           className="w-full rounded-[28px] border border-border bg-white px-5 py-4 text-sm text-slate-950 shadow-sm outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/20"
           disabled={servicesLoading}
@@ -178,7 +197,7 @@ export const ConsultationForm = ({
             <option>Loading services...</option>
           ) : (
             services.map((s) => (
-              <option key={s.id} value={s.title}>
+              <option key={s.id} value={s.id}>
                 {s.title}
               </option>
             ))
