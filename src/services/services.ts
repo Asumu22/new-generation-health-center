@@ -3,7 +3,7 @@ import { cacheService } from "./cache";
 import type { ServiceItem } from "../types";
 
 const SERVICES_CACHE_KEY = "services_all";
-const FETCH_TIMEOUT_MS = 5000;
+const FETCH_TIMEOUT_MS = 15000;
 
 const withTimeout = <T>(promise: Promise<T>, timeoutMs: number): Promise<T> => {
   return Promise.race([

@@ -232,6 +232,18 @@ export const LandingPage = () => {
     });
   };
 
+  const serviceCards = useMemo(() => {
+    if (services.length > 0) return services;
+    return servicesSection.items.map((item, idx) => ({
+      id: `fallback-${idx}`,
+      title: item.title || "Service",
+      description: item.description || "",
+      image_url: item.image || "",
+      created_at: "",
+      updated_at: "",
+    }));
+  }, [services, servicesSection.items]);
+
   // Memoized stats to prevent unnecessary recalculations
   const heroStats = useMemo(
     () => landingContent.hero.stats || [],

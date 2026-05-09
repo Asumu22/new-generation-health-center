@@ -3,7 +3,7 @@ import { cacheService } from "./cache";
 import type { ContentSectionKey, SiteContent } from "../types/content";
 
 const CONTENT_CACHE_KEY = "site_content_all";
-const FETCH_TIMEOUT_MS = 5000; // 5 second timeout
+const FETCH_TIMEOUT_MS = 15000; // 15 second timeout for production
 
 // Helper to add timeout to a promise
 const withTimeout = <T>(promise: Promise<T>, timeoutMs: number): Promise<T> => {
