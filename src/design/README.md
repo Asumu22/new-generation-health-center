@@ -1,0 +1,84 @@
+/\*\*
+
+- Design System Documentation & Guide
+-
+- This file documents the design system components and their usage.
+-
+- COLORS:
+- - Primary: #2E4BFF (Main brand color)
+- - Secondary: #0F172A (Dark navy for text)
+- - Surface: #F8FAFF (Light background)
+- - Accent: #4B6BFF (Secondary brand color)
+-
+- TYPOGRAPHY:
+- - Font Family: Inter (sans-serif)
+- - Font Sizes: xs (0.75rem) to 6xl (3.75rem)
+- - Font Weights: light (300), normal (400), medium (500), semibold (600), bold (700)
+-
+- SPACING:
+- - 8px based scale (xs: 0.25rem to 8xl: 8rem)
+-
+- BORDER RADIUS:
+- - sm: 0.375rem, md: 0.5rem, lg: 0.75rem, xl: 1rem, 2xl: 1.25rem
+-
+- SHADOWS:
+- - xs, sm, md, lg, xl, soft, elevated
+-
+- COMPONENT USAGE EXAMPLES:
+-
+- 1.  Button
+- <Button variant="primary" size="md">Click me</Button>
+- <Button variant="outline" size="sm">Secondary</Button>
+-
+- 2.  Typography
+- <Heading level="h1" size="2xl">Main Title</Heading>
+- <Paragraph size="md" color="secondary">Body text</Paragraph>
+- <Label>Form Label</Label>
+-
+- 3.  Containers
+- <Container size="lg">
+-      <Section variant="default" paddingY="lg">
+-        <Card variant="default" padding="md">
+-          Content here
+-        </Card>
+-      </Section>
+- </Container>
+-
+- 4.  Layout Pattern
+- <Section variant="default">
+-      <Container size="lg">
+-        <Heading level="h2" size="2xl">Section Title</Heading>
+-        <Paragraph>Description</Paragraph>
+-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-8">
+-          {/* Cards */}
+-        </div>
+-      </Container>
+- </Section>
+-
+- DESIGN SYSTEM FILES:
+- - /src/components/Button.tsx - Reusable button component
+- - /src/components/Typography.tsx - Heading, Paragraph, Label, Caption
+- - /src/components/Container.tsx - Responsive container
+- - /src/components/Section.tsx - Full-width section wrapper
+- - /src/components/Card.tsx - Card component for content containers
+- - /src/design/tokens.ts - Design tokens and constants
+- - /src/design/utils.ts - Utility functions for class generation
+- - /src/index.css - Global styles and utilities
+-
+- RESPONSIVE BREAKPOINTS:
+- - sm: 640px
+- - md: 768px
+- - lg: 1024px
+- - xl: 1280px
+- - 2xl: 1536px
+-
+- CSS CUSTOM PROPERTIES (Variables):
+- - --color-primary
+- - --color-primary-hover
+- - --color-secondary
+- - --color-surface
+- - --shadow-sm, --shadow-md, --shadow-lg
+- - --transition-fast, --transition-normal
+    \*/
+
+export {};
