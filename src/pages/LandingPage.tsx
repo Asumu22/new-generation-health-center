@@ -33,10 +33,10 @@ const DEFAULT_CONTENT = {
         "Expert nurse practitioners and physicians working together to give your loved ones the highest quality care.",
     },
     stats: [
-      { value: "30+", label: "years of experience" },
-      { value: "120+", label: "trusted specialists" },
-      { value: "500+", label: "families supported" },
-      { value: "24/7", label: "care coordination" },
+      { value: "10+", label: "years of experience" },
+      { value: "7+", label: "trusted specialists" },
+      { value: "1000+", label: "patients cared for" },
+      { value: "24/7", label: "care and support" },
     ],
   },
   servicesSection: {
